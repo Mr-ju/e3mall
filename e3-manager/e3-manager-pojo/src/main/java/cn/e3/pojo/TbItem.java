@@ -90,7 +90,7 @@ public class TbItem implements Serializable {
         this.cid = cid;
     }
 
-    public Byte getStatus() {
+    public Byte getStatus(byte b) {
         return status;
     }
 

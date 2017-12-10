@@ -1,7 +1,12 @@
 package cn.e3.manager.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import cn.e3.mapper.TbItemDescMapper;
+import cn.e3.pojo.TbItemDesc;
+import cn.e3.utils.E3mallResult;
+import cn.e3.utils.IDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +24,10 @@ public class ItemServiceImpl implements ItemService {
 	//注入商品mapper接口代理对象
 	@Autowired
 	private TbItemMapper itemMapper;
+
+	//注入商品描述mapper接口代理对象
+	@Autowired
+	private TbItemDescMapper itemDescMapper;
 	/**
 	 * 需求:根据id查询商品数据
 	 */
@@ -53,6 +62,34 @@ public class ItemServiceImpl implements ItemService {
 		pagebean.setRows(list);
 		//返回分页对象
 		return pagebean;
+
+	}
+	/**
+	 * 需求:保存商品对象
+	 * 参数:TbItem item , TbItemDesc itemDesc , ItemParam parram
+	 * 返回值:E3mallResult
+	 */
+	@Override
+	public E3mallResult saveItem(TbItem item, TbItemDesc itemDesc) {
+		//生成商品Id
+		//毫秒+随机数
+		long itemId = IDUtils.genItemId();
+		item.setId(itemId);
+		//商品状态,1.正常2.下架3.删除
+		item.getStatus((byte)1);
+		//创建时间
+		Date date = new Date();
+		item.setCreated(date);
+		item.setUpdated(date);
+		//保存商品对象
+		itemMapper.insert(item);
+		//保存商品描述对象
+		itemDesc.setItemId(itemId);
+		itemDesc.setCreated(date);
+		itemDesc.setUpdated(date);
+		//保存商品描述对象
+		itemDescMapper.insert(itemDesc);
+		return E3mallResult.ok();
 	}
 
 }
