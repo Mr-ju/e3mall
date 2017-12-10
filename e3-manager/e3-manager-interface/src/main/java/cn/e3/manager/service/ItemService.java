@@ -1,7 +1,9 @@
 package cn.e3.manager.service;
 
 import cn.e3.pojo.TbItem;
+import cn.e3.pojo.TbItemDesc;
 import cn.e3.utils.DatagridPagebean;
+import cn.e3.utils.E3mallResult;
 
 public interface ItemService {
 
@@ -16,4 +18,11 @@ public interface ItemService {
 	 * 返回值:DatagridPagebean
 	 */
 	public DatagridPagebean findItemListByPage(Integer page,Integer rows);
+	/**
+	 * 需求:保存商品对象
+	 * 参数:TbItem item , TbItemDesc itemDesc , ItemParam parram
+	 * 返回值:E3mallResult
+	 */
+	public E3mallResult saveItem(TbItem item , TbItemDesc itemDesc );
+
 }

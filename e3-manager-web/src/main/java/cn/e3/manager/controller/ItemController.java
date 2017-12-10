@@ -1,5 +1,7 @@
 package cn.e3.manager.controller;
 
+import cn.e3.pojo.TbItemDesc;
+import cn.e3.utils.E3mallResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,4 +55,19 @@ public class ItemController {
 		DatagridPagebean pagebean = itemService.findItemListByPage(page, rows);
 		return pagebean;
 	}
+
+	/**
+	 * 需求:保存商品对象
+	 * 请求:/item/save
+	 * 参数:TbItem item , TbItemDesc itemDesc , ItemParam parram
+	 * 返回值:json格式E3mallResult
+	 */
+	@RequestMapping("/item/save")
+	@ResponseBody
+	public E3mallResult saveItem(TbItem item, TbItemDesc itemDesc){
+		//调用远程service服务方法
+		E3mallResult result = itemService.saveItem(item,itemDesc);
+		return result;
+	}
+
 }
