@@ -76,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
 		long itemId = IDUtils.genItemId();
 		item.setId(itemId);
 		//商品状态,1.正常2.下架3.删除
-		item.getStatus((byte)1);
+		item.setStatus((byte)1);
 		//创建时间
 		Date date = new Date();
 		item.setCreated(date);
