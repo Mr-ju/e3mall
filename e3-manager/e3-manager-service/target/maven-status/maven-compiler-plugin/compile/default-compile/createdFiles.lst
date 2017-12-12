@@ -1,2 +1,3 @@
 cn\e3\manager\service\impl\ItemServiceImpl.class
+cn\e3\manager\service\impl\ItemParamServiceImpl.class
 cn\e3\manager\service\impl\ItemCatServiceImpl.class

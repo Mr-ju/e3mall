@@ -23,6 +23,6 @@ public interface ItemService {
 	 * 参数:TbItem item , TbItemDesc itemDesc , ItemParam parram
 	 * 返回值:E3mallResult
 	 */
-	public E3mallResult saveItem(TbItem item , TbItemDesc itemDesc );
+	public E3mallResult saveItem(TbItem item , TbItemDesc itemDesc , String itemParams);
 
 }

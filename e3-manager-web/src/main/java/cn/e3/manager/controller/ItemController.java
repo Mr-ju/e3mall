@@ -64,9 +64,9 @@ public class ItemController {
 	 */
 	@RequestMapping("/item/save")
 	@ResponseBody
-	public E3mallResult saveItem(TbItem item, TbItemDesc itemDesc){
+	public E3mallResult saveItem(TbItem item, TbItemDesc itemDesc , String itemParams){
 		//调用远程service服务方法
-		E3mallResult result = itemService.saveItem(item,itemDesc);
+		E3mallResult result = itemService.saveItem(item,itemDesc,itemParams);
 		return result;
 	}
 

@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import cn.e3.mapper.TbItemDescMapper;
+import cn.e3.mapper.TbItemParamItemMapper;
 import cn.e3.pojo.TbItemDesc;
+import cn.e3.pojo.TbItemParamItem;
 import cn.e3.utils.E3mallResult;
 import cn.e3.utils.IDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,10 @@ public class ItemServiceImpl implements ItemService {
 	//注入商品描述mapper接口代理对象
 	@Autowired
 	private TbItemDescMapper itemDescMapper;
+
+	//注入商品规格参数mapper接口代理对象
+	@Autowired
+	private TbItemParamItemMapper itemParamItemMapper;
 	/**
 	 * 需求:根据id查询商品数据
 	 */
@@ -64,13 +70,15 @@ public class ItemServiceImpl implements ItemService {
 		return pagebean;
 
 	}
+
+
 	/**
 	 * 需求:保存商品对象
 	 * 参数:TbItem item , TbItemDesc itemDesc , ItemParam parram
 	 * 返回值:E3mallResult
 	 */
 	@Override
-	public E3mallResult saveItem(TbItem item, TbItemDesc itemDesc) {
+	public E3mallResult saveItem(TbItem item, TbItemDesc itemDesc, String itemParams) {
 		//生成商品Id
 		//毫秒+随机数
 		long itemId = IDUtils.genItemId();
@@ -89,6 +97,15 @@ public class ItemServiceImpl implements ItemService {
 		itemDesc.setUpdated(date);
 		//保存商品描述对象
 		itemDescMapper.insert(itemDesc);
+		//创建商品规格对象,封装规格值
+		TbItemParamItem itemParamItem = new TbItemParamItem();
+		//设置相关属性值
+		itemParamItem.setItemId(itemId);
+		itemParamItem.setParamData(itemParams);
+		itemParamItem.setCreated(date);
+		itemParamItem.setUpdated(date);
+		//保存商品规格参数
+		itemParamItemMapper.insertSelective(itemParamItem);
 		return E3mallResult.ok();
 	}
 
