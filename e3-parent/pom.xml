@@ -7,6 +7,9 @@
 	<modules>
 		<module>../e3-portal-web</module>
 		<module>../e3-content</module>
+        <module>../e3-jedis</module>
+        <module>../e3-search-web</module>
+		<module>../e3-search</module>
 	</modules>
 
 	<packaging>pom</packaging>

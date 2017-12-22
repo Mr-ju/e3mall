@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.e3.jedis.dao.JedisDao;
+import cn.e3.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,7 +42,14 @@ public class ContentServiceImpl implements ContentService {
 	
 	@Value("${HEIGHTB}")
 	private Integer HEIGHTB;
-	
+
+	//注入jedisDao对象
+	@Autowired
+	private JedisDao jedisDao;
+
+	//注入首页缓存唯一标示
+	@Value("${INDEX_CACHE}")
+	private String INDEX_CACHE;
 	
 	
 
@@ -80,8 +90,14 @@ public class ContentServiceImpl implements ContentService {
 	 * 需求:保存广告内容数据
 	 * 参数:TbContent content
 	 * 返回值:E3mallResult
+	 * 缓存同步:
+	 * 删除,修改,添加广告数据时先删除缓存.
+	 * 用户再次查询,缓存已经不存在了,需要从新从数据库查询新的数据.
+	 * 从而达到缓存同步目的
 	 */
 	public E3mallResult saveContent(TbContent content) {
+		//先删除缓存
+        jedisDao.hdel(INDEX_CACHE,content.getCategoryId()+"");
 		// 补全时间
 		Date date = new Date();
 		content.setUpdated(date);
@@ -95,8 +111,35 @@ public class ContentServiceImpl implements ContentService {
 	 * 需求:查询首页加载广告数据
 	 * @param categoryId
 	 * @return
+	 * 首页,获取其他广告页面加载广告数据是从数据库中查询,为了减轻数据库压力,给广告服务添加缓存.
+	 * 广告数据查询时候,首先先查询redis缓存,如果缓存中有数据,直接返回即可,否则在次查询数据库
+	 * 但同时,把查询的数据库数据放入缓存.
+	 * redis缓存服务器数据库结构:
+	 * 缓存数据结构:hash
+	 * key:INDEX_CACHE(首页缓存)  FOOD_CACHE(食品页面缓存)  CLOSE_CACHE(服装缓存)
+	 * field:categoryId(缓存分类)
+	 * value:json(缓存数据)
+	 * 缓存流程:
+	 * 1,先查询缓存,如果有缓存,直接返回,不再查询数据库
+	 * 2,如果缓存不存在,查询数据库,同时需要把查询的数据放入缓存
 	 */
 	public List<AdItem> findContentAdList(Long categoryId) {
+
+		try {
+			//先查询缓存
+			String adJson = jedisDao.hget(INDEX_CACHE, categoryId + "");
+			//判断redis中是否存在广告缓存
+			if (StringUtils.isNotBlank(adJson)){
+            //把广告json字符串数据转换成集合对象,返回
+                List<AdItem> adList = JsonUtils.jsonToList(adJson, AdItem.class);
+                return adList;
+
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
 		//创建广告数据封装集合对象List<AdItem>
 		List<AdItem> adList = new ArrayList<AdItem>();
 		
@@ -130,6 +173,9 @@ public class ContentServiceImpl implements ContentService {
 			//把广告对象添加到广告集合
 			adList.add(ad);
 		}
+
+		//放入缓存,当其他用户查询广告数据时候,查询缓存数据
+		jedisDao.hset(INDEX_CACHE,categoryId+"",JsonUtils.objectToJson(adList));
 		return adList;
 	}
 
