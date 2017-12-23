@@ -87,7 +87,7 @@ public class SearchItemServiceImpl implements SearchItemService {
             solrQuery.setQuery(qName);
         }else {
             //查询所有
-            solrQuery.setQuery("*.*");
+            solrQuery.setQuery("*:*");
         }
 
         //分页

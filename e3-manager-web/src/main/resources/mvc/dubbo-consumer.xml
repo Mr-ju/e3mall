@@ -43,4 +43,7 @@
     <dubbo:reference id="itemParamService"
                      interface="cn.e3.manager.service.ItemParamService" timeout="1000000" retries="2"/>
 
+    <!-- 搜索服务 -->
+    <dubbo:reference id="searchItemService"
+                     interface="cn.e3.search.service.SearchItemService" timeout="1000000" retries="2"/>
 </beans>
